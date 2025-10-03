@@ -1,61 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+﻿# Geumcheon Asset Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel backend that powers the Asset Management mobile client. It exposes REST endpoints for authentication, dashboard metrics, asset CRUD (+ photo uploads), user assignment data, and request workflows.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Sanctum token-based authentication (/api/auth/login, /api/auth/logout, /api/me).
+- Dashboard summary endpoint with category and status breakdowns.
+- Asset catalogue with filtering, search, and pagination.
+- Asset creation/update supporting metadata, custodian assignments, and photo uploads.
+- User directory scoped by department and is_active flag.
+- Asset requests and assignments (controllers/resources already scaffolded).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.2+
+- Composer 2+
+- MySQL 8+ (or compatible)
+- Node.js 18+ (optional, for front-end assets)
 
-## Learning Laravel
+## Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+`ash
+cp .env.example .env
+composer install
+php artisan key:generate
+`
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Configure .env:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`ini
+APP_URL=http://192.168.100.62:8000
+SANCTUM_STATEFUL_DOMAINS=192.168.100.62:8000
+SESSION_DOMAIN=192.168.100.62
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=geumcheon_assets
+DB_USERNAME=root
+DB_PASSWORD=secret
+`
 
-## Laravel Sponsors
+### Database
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+`ash
+php artisan migrate --seed
+`
 
-### Premium Partners
+Seeds include demo roles, categories, assets, and users (with passwords hashed). Adjust seeders as needed for staging/production.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Storage & Media
 
-## Contributing
+`ash
+php artisan storage:link
+`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Asset photos uploaded from the Flutter client are saved in storage/app/public/asset-photos. The API returns both sset_photo_path and a public sset_photo_url so the mobile app can display images.
 
-## Code of Conduct
+### Running the API
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+`ash
+php artisan serve --host=0.0.0.0 --port=8000
+`
 
-## Security Vulnerabilities
+Or configure your preferred server (Valet, Sail, nginx, Apache). Ensure the host/port matches the Flutter client's ApiConfig.baseUrl.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## API Overview
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | /api/auth/login | Obtain Sanctum token |
+| POST | /api/auth/logout | Revoke current token |
+| GET | /api/me | Current user profile |
+| GET | /api/dashboard | Totals, critical counts, categories |
+| GET | /api/assets | List assets (filters: sset_category_id, status, search) |
+| POST | /api/assets | Create asset (multipart with optional sset_photo) |
+| PUT | /api/assets/{id} | Update asset (supports sset_photo or emove_asset_photo=1) |
+| DELETE | /api/assets/{id} | Delete asset |
+| GET | /api/users | Fetch assignable users (filtered by department) |
+| Resource | /api/asset-requests | CRUD for asset requests |
+| Resource | /api/asset-assignments | Manage assignments |
+
+All endpoints require Authorization: Bearer <token> except login.
+
+## Uploading Asset Photos
+
+- Use multipart/form-data with field name sset_photo.
+- To remove an existing photo, send emove_asset_photo=1 (without uploading a new file).
+- Laravel stores files on the public disk; configure filesystem drivers if using S3/MinIO.
+
+## Tests
+
+Run the feature tests (extend as needed):
+
+`ash
+php artisan test
+`
+
+## Deployment Notes
+
+- Configure web server to serve /public as the document root.
+- Ensure APP_URL matches your accessible domain so the delivered photo URLs are correct.
+- Queue workers can be enabled later for heavy background jobs; current flows run synchronously.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Internal project for Geumcheon. Redistribution requires permission from the maintainers.
