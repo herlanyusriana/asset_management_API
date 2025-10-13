@@ -99,6 +99,11 @@ class AssetDemoSeeder extends Seeder
                 'department_code' => 'IT',
                 'description' => 'CPU dan unit pemrosesan lainnya',
             ],
+            [
+                'name' => 'Monitors',
+                'department_code' => 'IT',
+                'description' => 'Monitor LCD/LED untuk workstation dan ruang meeting',
+            ],
         ];
 
         $categoryModels = collect($categories)->map(function (array $data) {
@@ -138,6 +143,21 @@ class AssetDemoSeeder extends Seeder
                 'condition_notes' => 'Menunggu pergantian PSU',
                 'location' => 'Finance Office',
                 'current_custodian_id' => $userModels['alice.hr@example.com']->id,
+            ],
+            [
+                'asset_code' => 'MN-MTG-007',
+                'name' => 'Dell UltraSharp 27"',
+                'asset_category_id' => $categoryModels['Monitors']->id,
+                'brand' => 'Dell',
+                'model' => 'U2722DE',
+                'serial_number' => 'DL-MON-8821',
+                'purchase_date' => now()->subMonths(4)->toDateString(),
+                'warranty_expiry' => now()->addMonths(20)->toDateString(),
+                'purchase_price' => 7800000,
+                'status' => 'available',
+                'condition_notes' => 'Cadangan untuk ruang meeting',
+                'location' => 'Gudang IT - Rak Monitor',
+                'current_custodian_id' => null,
             ],
         ];
 
