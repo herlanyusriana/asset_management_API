@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AssetDemoSeeder::class,
+            MonitoringUserSeeder::class,
         ]);
     }
 }
