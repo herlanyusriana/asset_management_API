@@ -16,12 +16,14 @@ return new class extends Migration
             $table->string('department_name')->nullable()->after('asset_category_id');
         });
 
-        DB::statement(
-            "UPDATE assets a
-                LEFT JOIN asset_categories c ON a.asset_category_id = c.id
-             SET a.department_name = c.department_code
-             WHERE a.department_name IS NULL OR a.department_name = ''"
-        );
+        if (DB::getDriverName() !== 'sqlite') {
+            DB::statement(
+                "UPDATE assets a
+                    LEFT JOIN asset_categories c ON a.asset_category_id = c.id
+                 SET a.department_name = c.department_code
+                 WHERE a.department_name IS NULL OR a.department_name = ''"
+            );
+        }
     }
 
     /**
