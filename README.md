@@ -37,7 +37,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=geumcheon_assets
 DB_USERNAME=root
-DB_PASSWORD=secret
+DB_PASSWORD=palapeyang
 `
 
 ### Database
@@ -74,7 +74,8 @@ Or configure your preferred server (Valet, Sail, nginx, Apache). Ensure the host
 | GET | /api/dashboard | Totals, critical counts, categories |
 | GET | /api/assets | List assets (filters: sset_category_id, status, search) |
 | POST | /api/assets | Create asset (multipart with optional sset_photo) |
-| PUT | /api/assets/{id} | Update asset (supports sset_photo or emove_asset_photo=1) |
+| PUT | /api/assets/{id} | Update asset (supports sset_photo or 
+emove_asset_photo=1) |
 | DELETE | /api/assets/{id} | Delete asset |
 | GET | /api/users | Fetch assignable users (filtered by department) |
 | Resource | /api/asset-requests | CRUD for asset requests |
@@ -85,7 +86,8 @@ All endpoints require Authorization: Bearer <token> except login.
 ## Uploading Asset Photos
 
 - Use multipart/form-data with field name sset_photo.
-- To remove an existing photo, send emove_asset_photo=1 (without uploading a new file).
+- To remove an existing photo, send 
+emove_asset_photo=1 (without uploading a new file).
 - Laravel stores files on the public disk; configure filesystem drivers if using S3/MinIO.
 
 ## Tests

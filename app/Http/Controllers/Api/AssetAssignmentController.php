@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AssetAssignmentResource;
 use App\Models\Asset;
 use App\Models\AssetAssignment;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -32,9 +33,14 @@ class AssetAssignmentController extends Controller
 
     public function store(Request $request): AssetAssignmentResource
     {
+        if ($request->has('assigned_to_user_id') && $request->input('assigned_to_user_id') === '') {
+            $request->merge(['assigned_to_user_id' => null]);
+        }
+
         $data = $request->validate([
             'asset_id' => ['required', Rule::exists('assets', 'id')],
             'assigned_to_user_id' => ['nullable', Rule::exists('users', 'id')],
+            'assigned_to_name' => ['nullable', 'string', 'max:255'],
             'assigned_by_user_id' => ['required', Rule::exists('users', 'id')],
             'department_code' => ['required', 'string', 'max:50'],
             'assigned_at' => ['required', 'date'],
@@ -42,13 +48,22 @@ class AssetAssignmentController extends Controller
             'notes' => ['nullable', 'string'],
         ]);
 
+        $data['assigned_to_name'] = isset($data['assigned_to_name'])
+            ? (trim((string) $data['assigned_to_name']) ?: null)
+            : null;
+
         $assignment = AssetAssignment::create($data);
 
         /** @var Asset $asset */
         $asset = Asset::findOrFail($data['asset_id']);
+        $custodianName = $data['assigned_to_name'];
+        if (! empty($data['assigned_to_user_id'])) {
+            $custodianName = User::find($data['assigned_to_user_id'])?->name;
+        }
         $asset->update([
             'status' => 'assigned',
             'current_custodian_id' => $data['assigned_to_user_id'] ?? $asset->current_custodian_id,
+            'current_custodian_name' => $custodianName,
         ]);
 
         return AssetAssignmentResource::make($assignment->load(['asset.category', 'assignedTo', 'assignedBy']));
@@ -68,6 +83,7 @@ class AssetAssignmentController extends Controller
             $assetAssignment->asset->update([
                 'status' => 'available',
                 'current_custodian_id' => null,
+                'current_custodian_name' => null,
             ]);
         }
 

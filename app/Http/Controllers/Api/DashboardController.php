@@ -52,7 +52,7 @@ class DashboardController extends Controller
                     'asset_code' => $assignment->asset->asset_code,
                     'status' => $assignment->asset->status,
                 ],
-                'assigned_to' => $assignment->assignedTo?->name,
+                'assigned_to' => $assignment->assigned_to_name ?? $assignment->assignedTo?->name,
                 'assigned_at' => $assignment->assigned_at,
                 'returned_at' => $assignment->returned_at,
                 'notes' => $assignment->notes,

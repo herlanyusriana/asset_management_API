@@ -12,6 +12,7 @@ class AssetAssignment extends Model
     protected $fillable = [
         'asset_id',
         'assigned_to_user_id',
+        'assigned_to_name',
         'assigned_by_user_id',
         'department_code',
         'assigned_at',

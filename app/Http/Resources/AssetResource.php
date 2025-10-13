@@ -21,6 +21,11 @@ class AssetResource extends JsonResource
             'name' => $this->name,
             'brand' => $this->brand,
             'model' => $this->model,
+            'processor_name' => $this->processor_name,
+            'ram_capacity' => $this->ram_capacity,
+            'storage_type' => $this->storage_type,
+            'storage_brand' => $this->storage_brand,
+            'storage_capacity' => $this->storage_capacity,
             'serial_number' => $this->serial_number,
             'purchase_date' => optional($this->purchase_date)?->toDateString(),
             'warranty_expiry' => optional($this->warranty_expiry)?->toDateString(),
@@ -32,6 +37,7 @@ class AssetResource extends JsonResource
             'asset_photo_url' => $this->asset_photo_path
                 ? Storage::disk('public')->url($this->asset_photo_path)
                 : null,
+            'custodian_name' => $this->current_custodian_name ?? $this->custodian?->name,
             'category' => $this->whenLoaded('category', fn () => [
                 'id' => $this->category->id,
                 'name' => $this->category->name,

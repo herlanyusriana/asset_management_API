@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('dashboard', DashboardController::class);
 
     Route::apiResource('asset-categories', AssetCategoryController::class);
+    Route::get('assets/code/{code}', [AssetController::class, 'showByCode']);
     Route::apiResource('assets', AssetController::class);
+    Route::get('assets/{asset}/barcode', [AssetController::class, 'barcode']);
     Route::apiResource('asset-assignments', AssetAssignmentController::class)->only([
         'index', 'store', 'update', 'destroy', 'show',
     ]);

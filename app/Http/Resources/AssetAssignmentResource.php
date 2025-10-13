@@ -21,6 +21,7 @@ class AssetAssignmentResource extends JsonResource
                 'name' => $this->asset->name,
                 'asset_code' => $this->asset->asset_code,
             ]),
+            'assigned_to_name' => $this->assigned_to_name,
             'assigned_to' => $this->whenLoaded('assignedTo', fn () => [
                 'id' => $this->assignedTo->id,
                 'name' => $this->assignedTo->name,

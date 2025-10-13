@@ -16,6 +16,11 @@ class Asset extends Model
         'asset_category_id',
         'brand',
         'model',
+        'processor_name',
+        'ram_capacity',
+        'storage_type',
+        'storage_brand',
+        'storage_capacity',
         'serial_number',
         'purchase_date',
         'warranty_expiry',
@@ -24,6 +29,7 @@ class Asset extends Model
         'condition_notes',
         'location',
         'current_custodian_id',
+        'current_custodian_name',
         'asset_photo_path',
     ];
 
