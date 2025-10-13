@@ -169,6 +169,21 @@ class AssetController extends Controller
             unset($validated['custodian_name']);
         }
 
+        foreach ([
+            'processor_name',
+            'ram_capacity',
+            'storage_type',
+            'storage_brand',
+            'storage_capacity',
+        ] as $specField) {
+            if ($request->has($specField)) {
+                $value = $request->input($specField);
+                $validated[$specField] = filled($value)
+                    ? trim((string) $value)
+                    : null;
+            }
+        }
+
         if (!empty($validated['current_custodian_id'])) {
             $user = User::find($validated['current_custodian_id']);
             if ($user) {
