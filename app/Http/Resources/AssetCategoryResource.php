@@ -19,7 +19,7 @@ class AssetCategoryResource extends JsonResource
             'name' => $this->name,
             'department_code' => $this->department_code,
             'description' => $this->description,
-            'asset_count' => $this->when(isset($this->assets_count), $this->assets_count),
+            'asset_count' => (int) ($this->assets_count ?? 0),
             'assets' => AssetResource::collection($this->whenLoaded('assets')),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
