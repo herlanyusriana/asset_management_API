@@ -67,7 +67,7 @@
                     <td>{{ $asset->asset_code }}</td>
                     <td>{{ $asset->name }}</td>
                     <td>{{ $asset->category->name ?? '-' }}</td>
-                    <td>{{ $asset->category->department_code ?? '-' }}</td>
+                    <td>{{ $asset->department_name ?? $asset->category->department_code ?? '-' }}</td>
                     <td>{{ ucfirst($asset->status) }}</td>
                     <td>{{ $asset->current_custodian_name ?? $asset->custodian->name ?? '-' }}</td>
                     <td>{{ $asset->location ?? '-' }}</td>

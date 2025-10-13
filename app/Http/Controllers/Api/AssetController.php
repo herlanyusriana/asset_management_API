@@ -142,11 +142,35 @@ class AssetController extends Controller
             'condition_notes' => ['nullable', 'string'],
             'location' => ['nullable', 'string', 'max:255'],
             'current_custodian_id' => ['nullable', 'exists:users,id'],
+            'custodian_name' => ['nullable', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
             'asset_photo' => ['sometimes', 'file', 'image', 'max:5120'],
             'remove_asset_photo' => ['sometimes', 'boolean'],
         ];
 
         $validated = $request->validate($rules);
+
+        if (array_key_exists('department', $validated)) {
+            $validated['department_name'] = filled($validated['department'])
+                ? $validated['department']
+                : null;
+            unset($validated['department']);
+        }
+
+        if (array_key_exists('custodian_name', $validated)) {
+            $validated['current_custodian_name'] = filled($validated['custodian_name'])
+                ? $validated['custodian_name']
+                : null;
+            unset($validated['custodian_name']);
+        }
+
+        if (!empty($validated['current_custodian_id'])) {
+            $user = User::find($validated['current_custodian_id']);
+            if ($user) {
+                $validated['current_custodian_name'] = $user->name;
+                $validated['department_name'] = $validated['department_name'] ?? $user->department_code;
+            }
+        }
 
         if ($request->hasFile('asset_photo')) {
             $path = $request->file('asset_photo')->store('asset-photos', 'public');

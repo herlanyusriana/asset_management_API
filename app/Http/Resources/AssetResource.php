@@ -27,6 +27,8 @@ class AssetResource extends JsonResource
             'storage_brand' => $this->storage_brand,
             'storage_capacity' => $this->storage_capacity,
             'serial_number' => $this->serial_number,
+            'department' => $this->department_name ?? $this->category?->department_code,
+            'department_name' => $this->department_name,
             'purchase_date' => optional($this->purchase_date)?->toDateString(),
             'warranty_expiry' => optional($this->warranty_expiry)?->toDateString(),
             'purchase_price' => $this->purchase_price,

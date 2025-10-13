@@ -71,7 +71,7 @@ class ReportController extends Controller
                     $asset->asset_code,
                     $asset->name,
                     $asset->category?->name,
-                    $asset->category?->department_code,
+                    $asset->department_name ?? $asset->category?->department_code,
                     ucfirst($asset->status),
                     $asset->current_custodian_name ?? $asset->custodian?->name,
                     $asset->location,

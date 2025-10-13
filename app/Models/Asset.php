@@ -14,6 +14,7 @@ class Asset extends Model
         'asset_code',
         'name',
         'asset_category_id',
+        'department_name',
         'brand',
         'model',
         'processor_name',
