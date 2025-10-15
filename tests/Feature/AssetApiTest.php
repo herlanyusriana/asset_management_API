@@ -109,9 +109,10 @@ class AssetApiTest extends TestCase
             'storage_brand' => 'WD Black',
             'storage_capacity' => '1 TB',
             'status' => 'assigned',
-            'department' => 'IT',
+            'department' => 'Finance',
             'custodian_name' => $user->name,
             'current_custodian_id' => $user->id,
+            'location' => 'Finance Desk',
         ];
 
         $response = $this->putJson("/api/assets/{$asset->id}", $payload);
@@ -120,7 +121,9 @@ class AssetApiTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.processor_name', 'AMD Ryzen 9 7940HS')
             ->assertJsonPath('data.ram_capacity', '32 GB')
-            ->assertJsonPath('data.storage_capacity', '1 TB');
+            ->assertJsonPath('data.storage_capacity', '1 TB')
+            ->assertJsonPath('data.department', 'Finance')
+            ->assertJsonPath('data.location', 'Finance Desk');
 
         $this->assertDatabaseHas('assets', [
             'id' => $asset->id,
@@ -130,6 +133,8 @@ class AssetApiTest extends TestCase
             'storage_brand' => 'WD Black',
             'storage_capacity' => '1 TB',
             'current_custodian_name' => $user->name,
+            'department_name' => 'Finance',
+            'location' => 'Finance Desk',
         ]);
     }
 

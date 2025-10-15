@@ -188,7 +188,9 @@ class AssetController extends Controller
             $user = User::find($validated['current_custodian_id']);
             if ($user) {
                 $validated['current_custodian_name'] = $user->name;
-                $validated['department_name'] = $validated['department_name'] ?? $user->department_code;
+                if (!$request->has('department') && !array_key_exists('department_name', $validated)) {
+                    $validated['department_name'] = $user->department_code;
+                }
             }
         }
 
