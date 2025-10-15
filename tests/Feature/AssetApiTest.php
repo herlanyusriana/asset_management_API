@@ -65,7 +65,7 @@ class AssetApiTest extends TestCase
         $response = $this->postJson('/api/assets', $payload);
 
         $response
-            ->assertOk()
+            ->assertCreated()
             ->assertJsonPath('data.processor_name', 'Intel Core i7-1260P')
             ->assertJsonPath('data.ram_capacity', '16 GB')
             ->assertJsonPath('data.storage_type', 'SSD NVMe');
